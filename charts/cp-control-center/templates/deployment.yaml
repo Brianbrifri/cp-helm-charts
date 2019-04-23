@@ -13,11 +13,13 @@ spec:
     matchLabels:
       app: {{ include "cp-control-center.name" . }}
       release: {{ .Release.Name }}
+      service: Client
   template:
     metadata:
       labels:
         app: {{ include "cp-control-center.name" . }}
         release: {{ .Release.Name }}
+        service: Client
       {{- if or .Values.podAnnotations .Values.prometheus.jmx.enabled }}
       annotations:
       {{- range $key, $value := .Values.podAnnotations }}
@@ -29,6 +31,18 @@ spec:
       {{- end }}
       {{- end }}
     spec:
+      affinity:
+        podAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - weight: 1
+              podAffinityTerm:
+                labelSelector:
+                  matchExpressions:
+                    - key: service
+                      operator: In
+                      values:
+                        - Client
+                topologyKey: "kubernetes.io/hostname"
       containers:
         - name: {{ .Chart.Name }}
           image: "{{ .Values.image }}:{{ .Values.imageTag }}"

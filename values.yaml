@@ -17,12 +17,12 @@ cp-zookeeper:
     ## production servers this number should likely be much larger.
     ##
     ## Size for Data dir, where ZooKeeper will store the in-memory database snapshots.
-    dataDirSize: 10Gi
-    # dataDirStorageClass: ""
+    dataDirSize: 500Gi
+    dataDirStorageClass: "kafka-cluster-st1-7olch7yq"
 
     ## Size for data log dir, which is a dedicated log device to be used, and helps avoid competition between logging and snaphots.
-    dataLogDirSize: 10Gi
-    # dataLogDirStorageClass: ""
+    dataLogDirSize: 500Gi
+    dataLogDirStorageClass: "kafka-cluster-st1-7olch7yq"
   resources: {}
   ## If you do want to specify resources, uncomment the following lines, adjust them as necessary,
   ## and remove the curly braces after 'resources:'
@@ -38,18 +38,18 @@ cp-zookeeper:
 ## ------------------------------------------------------
 cp-kafka:
   enabled: true
-  brokers: 3
+  brokers: 5
   image: confluentinc/cp-enterprise-kafka
   imageTag: 5.2.1
   ## Optionally specify an array of imagePullSecrets. Secrets must be manually created in the namespace.
   ## https://kubernetes.io/docs/concepts/containers/images/#specifying-imagepullsecrets-on-a-pod
   imagePullSecrets:
   #  - name: "regcred"
-  heapOptions: "-Xms512M -Xmx512M"
+  heapOptions: "-Xms512M -Xmx4026M"
   persistence:
     enabled: true
-    # storageClass: ""
-    size: 5Gi
+    storageClass: "kafka-cluster-st1-7olch7yq"
+    size: 500Gi
     disksPerBroker: 1
   resources: {}
   ## If you do want to specify resources, uncomment the following lines, adjust them as necessary,
@@ -109,7 +109,7 @@ cp-kafka-rest:
 ## Kafka Connect
 ## ------------------------------------------------------
 cp-kafka-connect:
-  enabled: true
+  enabled: false
   image: confluentinc/cp-kafka-connect
   imageTag: 5.2.1
   ## Optionally specify an array of imagePullSecrets. Secrets must be manually created in the namespace.
@@ -148,7 +148,7 @@ cp-ksql-server:
 cp-control-center:
   enabled: true
   image: confluentinc/cp-enterprise-control-center
-  imageTag: 5.2.0
+  imageTag: 5.2.1
   ## Optionally specify an array of imagePullSecrets. Secrets must be manually created in the namespace.
   ## https://kubernetes.io/docs/concepts/containers/images/#specifying-imagepullsecrets-on-a-pod
   imagePullSecrets:
